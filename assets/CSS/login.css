@@ -1,0 +1,82 @@
+*{
+  font-family: 'Lato', sans-serif;
+}
+
+body{
+  overflow: hidden;
+  height: 100%;
+  background: linear-gradient(180deg,#B2DFDB,#80CBC4) fixed no-repeat;
+}
+
+.login-div{
+  margin: 100px auto;
+  width: 300px;
+  background-color: #ffff;
+  padding: 60px;
+  /* box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px; */
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+}
+
+.logo{
+  width: 100px;
+  height: 100px;
+  margin: 0 auto;
+  margin-bottom: 5px;
+}
+
+.logo img{
+  width: 100%;
+}
+
+.title {
+  text-align: center;
+  color: #505050;
+  font-weight: bolder;
+  font-size: 30px;
+}
+
+.form{
+  width: 100%;
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+.form input{
+  font-size: 14px;
+  padding: 5px 5px 5px 5px;
+  border: none;
+  outline: none;
+  background: none;
+  width: 225px;
+}
+
+.username, .password{
+  display: block;
+  border-radius: 30px;
+  border: 1px solid rgba(0, 0,0,0.2);
+  padding: 10px;
+  margin: 10px 0;
+}
+
+.form svg{
+  height: 20px;
+  margin-bottom: -5px;
+  margin-left: 10px;
+  margin-right: 5px;
+}
+
+.login-btn{
+  width: 100%;
+  padding: 12px 10px;
+  border: none;
+  font-size: 18px;
+  border-radius: 30px;
+  background: linear-gradient(180deg,#B2DFDB,#80CBC4) fixed no-repeat;
+  color: #ffff;
+  margin-bottom: 5px;
+}
+
+.login-btn a {
+  color: #ffff;
+  text-decoration: none;
+}
