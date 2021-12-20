@@ -3,8 +3,8 @@ ob_start();
 session_start();
 include("connect.php");
 if(!empty($_SESSION['login_user'])){
-    header("Location:dashboard.php");
-    exit;
+    header("Location: dashboard.php");
+    exit();
 }
 if($_SERVER["REQUEST_METHOD"] == "POST") {
     // username and password sent from form 
@@ -16,12 +16,12 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
   if($count == 1) {
        $_SESSION['login_user'] = $myusername;
        
-    //    header("Location:dashboard.php");
-    echo "<script>
-      alert('Successfully login');
-     window.location.href='dashboard.php';
-      </script>";
-       exit;
+       header("Location: dashboard.php");
+    // echo "<script>
+    //   alert('Successfully login');
+    //  window.location.href='dashboard.php';
+    //   </script>";
+       exit();
     }else {
      echo "<script>
       alert('Error: Invalid username or password! Or your account does not have the right to access!');
