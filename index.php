@@ -1,11 +1,11 @@
 <?php
+ob_start();
 session_start();
+include("connect.php");
 if(!empty($_SESSION['login_user'])){
     header("Location:dashboard.php");
     exit;
 }
-ob_start();
-include("connect.php");
 if($_SERVER["REQUEST_METHOD"] == "POST") {
     // username and password sent from form 
   $myusername = mysqli_real_escape_string($conn,$_POST['username']);
