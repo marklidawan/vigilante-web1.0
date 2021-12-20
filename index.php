@@ -14,6 +14,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
   $result = mysqli_query($conn,"SELECT email,password,role FROM user WHERE email = '$myusername' and password = '$mypassword' and role=1");
   $count = mysqli_num_rows($result);
   var_dump($count);
+  die();
   if($count == 1) {
        $_SESSION['login_user'] = $myusername;
        header("location:dashboard.php");
