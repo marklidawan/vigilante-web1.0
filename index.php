@@ -1,10 +1,10 @@
 <?php
 session_start();
 if(!empty($_SESSION['login_user'])){
-    header("location:dashboard.php");
+    header("Location:dashboard.php");
     exit;
 }
-
+ob_start();
 include("connect.php");
 if($_SERVER["REQUEST_METHOD"] == "POST") {
     // username and password sent from form 
@@ -15,9 +15,8 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
   $count = mysqli_num_rows($result);
   if($count == 1) {
        $_SESSION['login_user'] = $myusername;
-       var_dump($myusername);
-       die();
-       header("location:dashboard.php");
+       
+       header("Location:dashboard.php");
        exit;
     }else {
      echo "<script>
