@@ -16,7 +16,11 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
   if($count == 1) {
        $_SESSION['login_user'] = $myusername;
        
-       header("Location:dashboard.php");
+    //    header("Location:dashboard.php");
+    echo "<script>
+      alert('Successfully login');
+     window.location.href='dashboard.php';
+      </script>";
        exit;
     }else {
      echo "<script>
