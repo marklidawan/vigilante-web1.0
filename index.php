@@ -15,6 +15,8 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
   $count = mysqli_num_rows($result);
   if($count == 1) {
        $_SESSION['login_user'] = $myusername;
+       var_dump($myusername);
+       die();
        header("location:dashboard.php");
        exit;
     }else {
