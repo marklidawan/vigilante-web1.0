@@ -1,19 +1,21 @@
-<!-- $data = array('message' => 'SIDHJFISD dsfg sdfiosd fdaf dfglj dfklg klfdghjkldhfgjk dfgjkndfjkg', '%number' => '09057288808' , '%status' => false); -->
-<!-- header('Content-Type: application/json; charset=utf-8'); -->
-<!-- echo json_encode($data); -->
 <?php
     include 'connect.php';
-    $report_message = "SELECT * FROM report LEFT JOIN user ON user.id = report.userId WHERE user.id = 1";
-	// $sms_msg = "SELECT * FROM sms_message WHERE status = 0 LIMIT 1";
+    session_start();
+    if(empty($_SESSION['login_user'])){
+    header("location:index.php");
+    exit;
+    }
+    $user = $_SESSION['login_user'];
+
+
+    $report_message = "SELECT * FROM report LEFT JOIN user ON user.id = report.userId WHERE report.status = 0";
+	$unattended = "SELECT COUNT(status) as total FROM report WHERE status = 0";
+    
     $output = mysqli_query($conn, $report_message);
-    // $output = mysqli_fetch_assoc(mysqli_query($conn, $report_message));
-	// $student_search = $conn->query($report_message);
-	// $row = $output->fetch_assoc();
-	// if($student_search->num_rows>0){
-        // header('Content-Type: application/json; charset=utf-8');
-        // $data = array('id' => $row['id'], '%message' => $row['message'], '%number' => $row['number'], '%status' => $row['status'] ? true : false);
-        // echo json_encode($data);
-    // }
+    $output2 = mysqli_query($conn, $unattended);
+    $unattended_output = $output2->fetch_assoc();
+    
+    
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -22,19 +24,22 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
-    <link rel = "icon" type = "image/png" href = "/assets/Images/vigilante-logo.png">
+    <link rel = "icon" type = "image/png" href = "assets/Images/vigilante-logo.png">
 
     <!-- css -->
-    <link rel="stylesheet" href="/assets/CSS/home.css">
+    <link rel="stylesheet" href="./assets/CSS/home.css">
     
+    <!-- jquery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
     <!-- Leaflet plugin -->
-    <!-- <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
     <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
 
     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.css" />
 
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/> -->
-    <!-- <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script> -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>
+
 
 </head>
 <body>
@@ -42,7 +47,7 @@
         <div id="header">
           <div class="header-container">
             <div class="logo">
-                <img src="/assets/Images/vigilante-logo.png" alt="">
+                <img src="assets/Images/vigilante-logo.png" alt="">
             </div>
             <div class="table">
                 <table>
@@ -50,80 +55,75 @@
                     <th>Name</th>
                     <th>Contact</th>
                     <th>Timestamp</th>
+                    <th>Emergency Type</th>
                     </tr>
                     <?php 
                     while($row = $output->fetch_assoc()) {
-                        echo "<tr>
+                        echo "<tr class='view-map-coordinate' id='view-map-coordinate' data-coordinate=".$row['coords']." data-fname=".$row['fname']." data-lname=".$row['lname']."  data-status=".$row['status'].">
                         <td>" .$row['fname'] . ' ' . $row['lname'] ."</td>
                         <td>" .$row['contactNumber']. "</td>
                         <td>" .$row['reportTimestamp']."</td>
+                        <td>" .$row['emergencyType']."</td>
                         </tr>";
                     }
-                    // for($i = 0; $i < count($output); $i++) {
-                    //     echo $row['id'];
-                    // }
-                    // foreach($output as $report) {
-                        // echo $report;
-                        // echo $report['fname'];
-                        // echo $report['id'] . " <br/>";
-                        // echo "<tr>
-                        // <td>" .$report['fname'] . ' ' . $report['lname'] ."</td>
-                        // <td>" .$report['contactNumber']. "</td>
-                        // <td>Timestamp</td>
-                        // </tr>";
-                    // }
                     ?>
                 </table>
             </div>
-                    
+            
             <div>
-            <span>Total Unattended: 1 </span>
+                <span>Total Unattended: <?php echo $unattended_output['total'] ?> </span><br>
+                <button class="button"><a href="logout.php">Logout</a></button>
+                
             </div>
           </div>
         </div>
-        <!-- <div id="map"/> -->
+        <div id="map">
       </div>
     </div>
 </body>
 </html>
-<!-- <script>
-    // Initialize map
-    res1 = ['8.4834276','124.661025'];
-    var map = L.map('map').setView([8.477217, 124.64592], 13);
-    var res = res1;
-    // Markers
-    var gps = L.marker(res)
-    .bindPopup("<strong>Name: </strong>Juan dela Cruz<br /><strong>Status:</strong> Unattended<br/><button class='button'>Attend</button>");
-    
-    var gps1 = L.marker(res) 
-    .bindPopup("<strong>Name: </strong>Mark Lid-awan<br /><strong>Status:</strong> Unattended<br/><button class='button'>Attend</button>")
-    .addTo(map);
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+<script>
+    $( document ).ready(function() {
+        // Initialize map
+        var map = L.map('map').setView([8.477217, 124.64592], 13);
+        var markerArray = [];
+        // Map
+        var osm = L.tileLayer('https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=SQBQ9GFuIgQnIQjD3uVy', {
+        attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
+        maxZoom: 20,
+        tileSize: 512,
+        zoomOffset: -1,
+        }).addTo(map);
 
-    // Layer Group
-    // var layerGroup = L.layerGroup([gps,gps1,gps2,gps3]) //[gps,gps1,gps2,gps3]
-    // .addTo(map);
+        $('body').on('click','#view-map-coordinate',function() {
+            var coordinates = JSON.parse($(this).attr('data-coordinate'));
+            var fname = $(this).attr('data-fname');
+            var lname = $(this).attr('data-lname');
+            var status = $(this).attr('data-status');
+            var status_code;
+            switch(status){
+                case "0":
+                    status_code = "Unattended";
+                    break;
+                case "1":
+                    status_code = "Attended";
+                    break;
+            }
+            var getArrLength = markerArray.length > 0 ? markerArray.length - 1 : 0;
+            var gps1 = L.marker(coordinates).bindPopup("<strong>Name: </strong>" + fname +' '+ lname+"<br /><strong>Status:</strong>" +status_code+"<br/><input type='button' value='Attend' class='button' data-marker-coordinates="+ JSON.stringify(coordinates) + " data-leaflet-id="+getArrLength+" id='remove-btn-marker'/>")
+            .addTo(map);
+            markerArray.push(gps1._leaflet_id);
+        });
 
-    // Delete
-    map.on('click', function(){
-        map.removeLayer(gps1);
+        $('body').on('click','#remove-btn-marker',function(){
+            console.log($(this).attr('data-leaflet-id'));
+            console.log(markerArray[$(this).attr('data-leaflet-id')]);
+            console.log(markerArray);
+            // var gps = JSON.parse($(this).attr('data-marker-coordinates'));
+            // var tmarker = this;
+            map.removeLayer(markerArray[$(this).attr('data-leaflet-id')]);
+        });
     });
 
-    // Map on click
-    var popup = L.popup();
-
-    function onMapClick(e) {
-        popup
-            .setLatLng(e.latlng)
-            .setContent("You clicked the map at " + e.latlng.toString())
-            .openOn(map);
-    }
-    map.on('click', onMapClick);
-
-    // Map
-    var osm = L.tileLayer('https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=SQBQ9GFuIgQnIQjD3uVy', {
-    attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
-    maxZoom: 20,
-    tileSize: 512,
-    zoomOffset: -1,
-    }).addTo(map);
-</script> -->
+</script>
