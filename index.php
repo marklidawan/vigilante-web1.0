@@ -12,10 +12,11 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
   $mypassword = mysqli_real_escape_string($conn,$_POST['password']); 
   //$mypassword = md5($mypassword); // encrption of password
   $result = mysqli_query($conn,"SELECT email,password,role FROM user WHERE email = '$myusername' and password = '$mypassword' and role=1");
-  
-  if($result) {
+  $count = mysqli_num_rows($result);
+  if($count == 1) {
        $_SESSION['login_user'] = $myusername;
        header("location:dashboard.php");
+       exit;
     }else {
      echo "<script>
       alert('Error: Invalid username or password! Or your account does not have the right to access!');
