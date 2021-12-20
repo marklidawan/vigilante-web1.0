@@ -1,12 +1,12 @@
 <?php
-ob_start();
-session_start();
-include("connect.php");
-    if(empty($_SESSION['login_user'])){
-    header("location:index.php");
-    exit;
-    }
-    $user = $_SESSION['login_user'];
+// ob_start();
+// session_start();
+// include("connect.php");
+//     if(empty($_SESSION['login_user'])){
+//     header("location:index.php");
+//     exit;
+//     }
+//     $user = $_SESSION['login_user'];
 
 
     $report_message = "SELECT * FROM report LEFT JOIN user ON user.id = report.userId WHERE report.status = 0";
