@@ -1,8 +1,8 @@
 <?php
-$servername = "127.0.0.1";
-$username = "homestead";
-$password = "secret";
-$dbname = "sms";
+$servername = "18.139.15.242";
+$username = "remdbtest";
+$password = "londonfoster@db@test";
+$dbname = "vigilante";
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
