@@ -67,7 +67,7 @@ include("connect.php");
                         <td>" .$row['contactNumber']. "</td>
                         <td>" .$row['reportTimestamp']."</td>
                         <td>" .$row['emergencyType']."</td>
-                        <td><input type='button' value='Attend' class='button' id='remove-btn-marker'/></td>
+                        <td><input type='button' value='Attend' class='button' id='help-attend-status' data-id='".$row['id']."'/></td>
                         </tr>";
                     }
                     ?>
@@ -123,8 +123,18 @@ include("connect.php");
             markerArray.push(gps1._leaflet_id);
         });
 
-        $('body').on('click','#remove-btn',function(){
-            
+        $('body').on('click','#help-attend-status',function(){
+            var report_id = $(this).attr('data-id');
+            $.ajax({
+                url : 'update_status.php?id=' + report_id,
+                type : 'POST',
+                success : function (result) {
+                    alert(result); // Here, you need to use response by PHP file.
+                },
+                error : function () {
+                    alert('error');
+                }
+            });
         });
     });
 
