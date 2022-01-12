@@ -3,11 +3,13 @@ ob_start();
 session_start();
 include("connect.php");
     if(empty($_SESSION['login_user'])){
-    header("location:index.php");
+    header("Location:index.php");
     exit;
     }
     $user = $_SESSION['login_user'];
-
+    $station_id = "SELECT id FROM authority WHERE username='$user'";
+    $station_id_conn = mysqli_query($conn, $station_id);
+    $station_id_output = $station_id_conn->fetch_assoc();
 
     $report_message = "SELECT * FROM report LEFT JOIN user ON user.id = report.userId WHERE report.status = 0";
 	$unattended = "SELECT COUNT(status) as total FROM report WHERE status = 0";
@@ -15,7 +17,6 @@ include("connect.php");
     $output = mysqli_query($conn, $report_message);
     $output2 = mysqli_query($conn, $unattended);
     $unattended_output = $output2->fetch_assoc();
-    
     
 ?>
 <!DOCTYPE html>
@@ -57,17 +58,20 @@ include("connect.php");
                     <th>Contact</th>
                     <th>Timestamp</th>
                     <th>Emergency Type</th>
+                    <th>Action</th>
                     </tr>
-                    <?php 
+                    <?php
                     while($row = $output->fetch_assoc()) {
-                        echo "<tr class='view-map-coordinate' id='view-map-coordinate' data-coordinate=".$row['coords']." data-fname=".$row['fname']." data-lname=".$row['lname']."  data-status=".$row['status'].">
+                     echo "<tr class='view-map-coordinate' id='view-map-coordinate' data-id=".$row['userId']." data-coordinate=".$row['coords']." data-fname=".$row['fname']." data-lname=".$row['lname']."  data-status=".$row['status'].">
                         <td>" .$row['fname'] . ' ' . $row['lname'] ."</td>
                         <td>" .$row['contactNumber']. "</td>
                         <td>" .$row['reportTimestamp']."</td>
                         <td>" .$row['emergencyType']."</td>
+                        <td><input type='button' value='Attend' class='button' id='remove-btn-marker'/></td>
                         </tr>";
                     }
                     ?>
+
                 </table>
             </div>
             
@@ -112,18 +116,15 @@ include("connect.php");
                     break;
             }
             var getArrLength = markerArray.length > 0 ? markerArray.length - 1 : 0;
-            var gps1 = L.marker(coordinates).bindPopup("<strong>Name: </strong>" + fname +' '+ lname+"<br /><strong>Status:</strong>" +status_code+"<br/><input type='button' value='Attend' class='button' data-marker-coordinates="+ JSON.stringify(coordinates) + " data-leaflet-id="+getArrLength+" id='remove-btn-marker'/>")
+
+            var gps1 = L.marker(coordinates)
+            .bindPopup("<strong>Name: </strong>" + fname +' '+ lname+"<br /><strong>Status:</strong>" +status_code+"<br/>") //<input type='button' value='Attend' class='button' data-marker-coordinates="+ JSON.stringify(coordinates) + " data-leaflet-id="+getArrLength+" id='remove-btn-marker'/>
             .addTo(map);
             markerArray.push(gps1._leaflet_id);
         });
 
-        $('body').on('click','#remove-btn-marker',function(){
-            console.log($(this).attr('data-leaflet-id'));
-            console.log(markerArray[$(this).attr('data-leaflet-id')]);
-            console.log(markerArray);
-            // var gps = JSON.parse($(this).attr('data-marker-coordinates'));
-            // var tmarker = this;
-            map.removeLayer(markerArray[$(this).attr('data-leaflet-id')]);
+        $('body').on('click','#remove-btn',function(){
+            
         });
     });
 

@@ -3,7 +3,7 @@ ob_start();
 session_start();
 include("connect.php");
 if(!empty($_SESSION['login_user'])){
-    header("Location: /dashboard.php");
+    header("Location: dashboard.php");
     exit();
 }
 if($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -11,12 +11,12 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
   $myusername = mysqli_real_escape_string($conn,$_POST['username']);
   $mypassword = mysqli_real_escape_string($conn,$_POST['password']); 
   //$mypassword = md5($mypassword); // encrption of password
-  $result = mysqli_query($conn,"SELECT email,password,role FROM user WHERE email = '$myusername' and password = '$mypassword' and role=1");
+  $result = mysqli_query($conn,"SELECT username,password FROM authority WHERE username = '$myusername' and password = '$mypassword'");
   $count = mysqli_num_rows($result);
   if($count == 1) {
        $_SESSION['login_user'] = $myusername;
        
-       header("Location: /dashboard.php");
+       header("Location: dashboard.php");
     // echo "<script>
     //   alert('Successfully login');
     //  window.location.href='dashboard.php';
