@@ -22,6 +22,8 @@
                 'address' => $row['address'],
                 'contactNumber' => $row['contactNumber'],
                 'emergencyNumber' => $row['emergencyNumber'],
+                'verified' => $row['verified'],
+                'verificationCode' => $row['verificationCode']
             )
         );
     }else{
