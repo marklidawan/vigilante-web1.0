@@ -11,7 +11,7 @@
     $contactNumber = isset($_GET['contact_number']) ? $_GET['contact_number'] : null;
     $emergencyNumber = isset($_GET['emergency_number']) ? $_GET['emergency_number'] : null;
 
-    $sql = "SELECT email,password FROM user WHERE email ='$email' AND password='$password'";
+    $sql = "SELECT email FROM user WHERE email ='$email'";
 
     $res = mysqli_query($conn, $sql);
     $count = mysqli_num_rows($res);
