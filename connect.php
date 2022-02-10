@@ -1,7 +1,7 @@
 <?php
-$servername = "18.139.15.242";
-$username = "remdbtest";
-$password = "londonfoster@db@test";
+$servername = "";
+$username = "";
+$password = "";
 $dbname = "vigilante";
 
 // Create connection
